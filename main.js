@@ -1,20 +1,19 @@
 let http = require("http");
 require("dotenv").config()
 let axios = require("axios")
-let queryString = require('query-string');
 let url = require("url")
 
 
 
 let service = http.createServer(function (req, res) {
-    console.log(urlParts(req));
+    url_parts = url.parse(req.url, true)
     if (req.method === 'GET') {
-        switch (req.url) {
+        switch (url_parts.pathname) {
             case "/list-user":
                 getDataWeb("https://reqres.in/api/users?page=2")
                 break
-            case `${urlParts(req).pathname}${urlParts(req).search}`:
-                weatherFromGet(req, res)
+            case "/Weather":
+                weatherFromGet(res)
                 break
             default:
                 res.writeHead(404, { 'Content-Type': 'application/json' })
@@ -144,16 +143,10 @@ function getData(req) {
 //         })
 // }
 
-
-let urlParts = (req) => {
-    let url_parts = url.parse(req.url, true)
-    return url_parts
-}
-
-let weatherFromGet = (req, res) => {
+let weatherFromGet = (res) => {
     let key = process.env.KEY
-    let capital = `${urlParts(req).query.Capital}`
-    let days = `${urlParts(req).query.Day}`
+    let capital = `${url_parts .query.Capital}`
+    let days = `${url_parts .query.Day}`
     let aqi = process.env.AQI
     let alerts = process.env.ALERTS
     let config = {
